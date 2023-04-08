@@ -1,0 +1,174 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="table-responsive">
+                <div class="table-wrapper">
+                    <div class="table-title">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <span>{{name}}</span>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal" class="btn btn-success btn-lg float-right"><i
+                                        class="fas fa-plus-circle"></i>Add {{name}}</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <table class="table table-striped table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>First name</th>
+                                <th>Last name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>DOB</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of returnedArray; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ item.firstName }}</td>
+                                <td>{{ item.lastName }}</td>
+                                <td>{{ item.email }}</td>
+                                <td>{{ item.phone }}</td>
+                                <td>{{ item.dob }}</td>
+                                <td>
+                                    <i data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="editUser(item)"
+                                        class="fas fa-edit"></i>
+                                    <a   class="delete"><i data-bs-toggle="modal" data-bs-target="#delModal"  (click)="deleteUser(item)" class="fa fa-trash" 
+                                            aria-hidden="true"></i> </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="clearfix">
+                        <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+                        <ul class="pagination">
+                            <pagination [totalItems]="registeredUsers.length" [itemsPerPage]="5"
+                                (pageChanged)="pageChanged($event)"></pagination>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+        <div class="modal-content">
+            <form [formGroup]="form" (ngSubmit)="submitForm()">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"> <span>{{name}}</span></h1>
+                    <button type="button" (click)="onReset()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" formControlName="firstName" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f['firstName'].errors }" />
+                        <div *ngIf="submitted && f['firstName'].errors" class="invalid-feedback">
+                            <div *ngIf="f['firstName'].errors['required']">Fullname is required</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" formControlName="lastName" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f['lastName'].errors }" />
+                        <div *ngIf="submitted && f['lastName'].errors" class="invalid-feedback">
+                            <div *ngIf="f['lastName'].errors['required']">Username is required</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input class="form-control" type="number" formControlName="phone" minlength="10"
+                            [ngClass]="{ 'is-invalid': submitted && f['phone'].errors }">
+                        <div *ngIf="submitted && f['phone'].errors" class="invalid-feedback">
+                            <div *ngIf="f['phone'].errors['phone']">dob is invalid</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" formControlName="email" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" />
+                        <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+                            <div *ngIf="f['email'].errors['required']">Email is required</div>
+                            <div *ngIf="f['email'].errors['email']">Email is invalid</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>DOB</label>
+                        <input type="date" class="form-control" formControlName="dob"
+                            [ngClass]="{ 'is-invalid': submitted && f['dob'].errors }">
+                        <div *ngIf="submitted && f['dob'].errors" class="invalid-feedback">
+
+                            <div *ngIf="f['dob'].errors['dob']">dob is invalid</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" formControlName="password" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
+                        <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+                            <div *ngIf="f['password'].errors['required']">Password is required</div>
+                            <div *ngIf="f['password'].errors['minlength']">
+                                Password must be at least 6 characters
+                            </div>
+                            <div *ngIf="f['password'].errors['maxlength']">
+                                Username must not exceed 40 characters
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" formControlName="confirmPassword" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f['confirmPassword'].errors }" />
+                        <div *ngIf="submitted && f['confirmPassword'].errors" class="invalid-feedback">
+                            <div *ngIf="f['confirmPassword'].errors['required']">
+                                Confirm Password is required
+                            </div>
+                            <div *ngIf="f['confirmPassword'].errors['matching']">
+                                Confirm Password does not match
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" data-bs-dismiss="modal" aria-label="Close"
+                        class="btn btn-primary mr-1 ">{{add_form ? 'Register' :
+                        'Update'}}</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close" type="reset"
+                        (click)="onReset()">Close</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="delModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Delete  <span>{{name}}</span></h1>
+          <button type="button" class="btn-close" (click)="onReset()" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete these Records?</p>
+            <p class="text-warning"><small>This action cannot be undone.</small></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" (click)="onReset()" data-bs-dismiss="modal">Close</button>
+          <button type="button" data-bs-dismiss="modal" (click)="ondel()" class="btn btn-danger" >Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  
